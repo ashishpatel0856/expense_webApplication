@@ -19,9 +19,9 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
 
-    console.log("Form submit triggered"); // Debug: check if submit works
+    console.log("Form submit triggered"); // check if submit works
 
-    // Basic validation
+    //  validation
     if (!fullName || !email || !password) {
       setError("All fields are required!");
       return;
@@ -38,7 +38,7 @@ const Signup = () => {
         password,
       });
 
-      console.log("Signup success:", response.data); // Debug: see response in console
+      console.log("Signup success:", response.data); 
 
       // Clear form fields
       setFullName("");
@@ -57,7 +57,6 @@ const Signup = () => {
 
   return (
     <div className="h-screen w-full relative flex items-center justify-center overflow-hidden">
-      {/* Background image */}
       <img
         src={logo_bg}
         alt="Background"
@@ -75,7 +74,6 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-            {/* Full Name Input */}
             <Input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -84,7 +82,6 @@ const Signup = () => {
               type="text"
             />
 
-            {/* Email Input */}
             <Input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -93,7 +90,6 @@ const Signup = () => {
               type="text"
             />
 
-            {/* Password Input */}
             <div className="col-span-2">
               <Input
                 value={password}
@@ -105,17 +101,15 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* Error message */}
           {error && (
             <p className="text-red-800 text-sm text-center bg-red-50 p-2 rounded">
               {error}
             </p>
           )}
 
-          {/* Submit button */}
           <button
             type="submit"
-            disabled={loading} // disable during loading
+            disabled={loading}
             className={`bg-blue-700 text-white rounded-md w-full py-3 text-lg font-medium hover:bg-blue-800 transition ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}

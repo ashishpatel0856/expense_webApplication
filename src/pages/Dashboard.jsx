@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axiosConfig from "../util/axiosConfig";
+import Filter from "./Filter";
 import { Pie, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -27,25 +28,26 @@ const Dashboard = () => {
     totalIncome: 0,
     totalExpenses: 0,
   });
-
-  const [recent, setRecent] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [monthly, setMonthly] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fullName = localStorage.getItem("fullName");
 
+  // Load initial dashboard data
   const loadDashboard = async () => {
     try {
-      const summaryRes = await axiosConfig.get("/dashboard/summary");
-      const recentRes = await axiosConfig.get("/transactions/recent");
-      const monthlyRes = await axiosConfig.get("/dashboard/monthly");
-
-      setSummary(summaryRes.data);
-      setRecent(recentRes.data);
-      setMonthly(monthlyRes.data);
+      const dashboardRes = await axiosConfig.get("/dashboard");
+      setSummary({
+        totalBalance: dashboardRes.data.totalBalance,
+        totalIncome: dashboardRes.data.totalIncomes,
+        totalExpenses: dashboardRes.data.totalExpenses,
+      });
+      setTransactions(dashboardRes.data.recentTransactions || []);
+      setMonthly(dashboardRes.data.monthlyTrend || []); // if backend sends monthly data
     } catch (err) {
-      console.error(err);
-      alert("Error loading dashboard");
+      console.error("Dashboard Load Error:", err);
+      alert("Error loading dashboard data");
     } finally {
       setLoading(false);
     }
@@ -63,18 +65,18 @@ const Dashboard = () => {
     );
   }
 
-  // --------- Chart Data ----------
+  // Pie Chart: Income vs Expense
   const pieData = {
     labels: ["Income", "Expense"],
     datasets: [
       {
         data: [summary.totalIncome, summary.totalExpenses],
         backgroundColor: ["#4ade80", "#f87171"],
-        borderWidth: 1,
       },
     ],
   };
 
+  // Bar Chart: Monthly Trend
   const barData = {
     labels: monthly.map((m) => m.month),
     datasets: [
@@ -91,11 +93,15 @@ const Dashboard = () => {
     ],
   };
 
+  // Handle filtered results from Filter component
+  const handleFilterResult = (filteredData) => {
+    setTransactions(filteredData);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       {/* ---------------- LEFT FIXED SIDEBAR ---------------- */}
-      <aside className="hidden md:flex flex-col w-64 bg-white shadow-lg p-6 fixed top-16 left-0 h-[calc(100vh-64px)]">
+      <aside className="hidden md:flex flex-col w-64 bg-white shadow-lg p-6 fixed top-20 left-0 h-[calc(100vh-80px)]">
         <nav className="flex flex-col gap-4 mt-4">
           <Link className="px-4 py-2 bg-yellow-200 rounded font-bold" to="/dashboard">
             Dashboard
@@ -115,84 +121,74 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      {/* ---------------- CENTER MAIN AREA ---------------- */}
-      <main className="flex-1 p-6 md:ml-64 md:mr-64 mt-16">
-        <h1 className="text-3xl font-semibold mb-2">
-          Welcome, {fullName || "User"} 👋
-        </h1>
-        <p className="text-gray-500">Your financial overview</p>
+      {/* ---------------- MAIN CONTENT ---------------- */}
+      <main className="flex-1 p-6 md:ml-64 mt-20 overflow-y-auto h-screen">
+        <h1 className="text-3xl font-semibold mb-1">Welcome, {fullName || "User"} 👋</h1>
+        <p className="text-gray-500 mb-6">Your financial overview</p>
 
-        {/* -------- Summary Cards -------- */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
-          <div className="bg-white p-6 shadow rounded-xl border">
-            <h3 className="text-lg text-gray-600">Total Balance</h3>
-            <p className="text-3xl font-bold text-indigo-600">₹{summary.totalBalance}</p>
+        {/* ---------- Summary Cards ---------- */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-gray-600">Total Balance</h3>
+            <p className="text-4xl font-semibold text-indigo-600 mt-2">₹{summary.totalBalance}</p>
           </div>
-
-          <div className="bg-white p-6 shadow rounded-xl border">
-            <h3 className="text-lg text-gray-600">Total Income</h3>
-            <p className="text-3xl font-bold text-green-600">₹{summary.totalIncome}</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-gray-600">Total Income</h3>
+            <p className="text-4xl font-semibold text-green-600 mt-2">₹{summary.totalIncome}</p>
           </div>
-
-          <div className="bg-white p-6 shadow rounded-xl border">
-            <h3 className="text-lg text-gray-600">Total Expenses</h3>
-            <p className="text-3xl font-bold text-red-600">₹{summary.totalExpenses}</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-gray-600">Total Expenses</h3>
+            <p className="text-4xl font-semibold text-red-600 mt-2">₹{summary.totalExpenses}</p>
           </div>
         </div>
 
-        {/* -------- Charts -------- */}
+        {/* ---------- Charts ---------- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
-          <div className="bg-white p-6 shadow rounded-xl border">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Income vs Expense
-            </h3>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Income vs Expense</h3>
             <Pie data={pieData} />
           </div>
-
-          <div className="bg-white p-6 shadow rounded-xl border">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Monthly Trend
-            </h3>
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Monthly Trend</h3>
             <Bar data={barData} />
           </div>
         </div>
 
-        {/* -------- Recent Transactions -------- */}
-        <div className="mt-10 bg-white p-6 shadow rounded-xl border">
-          <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
+        {/* ---------- Filter Component ---------- */}
+        <div className="mt-10">
+          <Filter onResult={handleFilterResult} />
+        </div>
 
-          {recent.length === 0 ? (
-            <p className="text-gray-500">No recent activity</p>
+        {/* ---------- Transactions Table ---------- */}
+        <div className="mt-6 bg-white p-6 rounded-xl shadow-sm border">
+          <h2 className="text-xl font-semibold mb-4">Transactions</h2>
+          {transactions.length === 0 ? (
+            <p className="text-gray-500">No transactions found.</p>
           ) : (
-            <table className="min-w-full border-t">
-              <thead className="border-b bg-gray-50">
-                <tr>
-                  <th className="p-3 text-left text-sm text-gray-500">Title</th>
-                  <th className="p-3 text-left text-sm text-gray-500">Type</th>
-                  <th className="p-3 text-left text-sm text-gray-500">Amount</th>
-                  <th className="p-3 text-left text-sm text-gray-500">Date</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {recent.map((t) => (
-                  <tr key={t.id} className="border-b hover:bg-gray-50">
-                    <td className="p-3">{t.title}</td>
-                    <td className="p-3 capitalize">{t.type}</td>
-                    <td
-                      className={`p-3 font-bold ${
-                        t.type === "expense" ? "text-red-600" : "text-green-600"
-                      }`}
-                    >
-                      {t.type === "expense" ? "-" : "+"}₹{t.amount}
-                    </td>
-                    <td className="p-3 text-gray-500">
-                      {new Date(t.date).toLocaleDateString()}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="p-3 text-left text-sm text-gray-500">Title</th>
+                    <th className="p-3 text-left text-sm text-gray-500">Type</th>
+                    <th className="p-3 text-left text-sm text-gray-500">Amount</th>
+                    <th className="p-3 text-left text-sm text-gray-500">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {transactions.map((t) => (
+                    <tr key={t.id} className="border-b hover:bg-gray-50">
+                      <td className="p-3">{t.name || t.title}</td>
+                      <td className="p-3 capitalize">{t.type}</td>
+                      <td className={`p-3 font-bold ${t.type === "expense" ? "text-red-600" : "text-green-600"}`}>
+                        {t.type === "expense" ? "-" : "+"}₹{t.amount}
+                      </td>
+                      <td className="p-3 text-gray-500">{new Date(t.date).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </main>

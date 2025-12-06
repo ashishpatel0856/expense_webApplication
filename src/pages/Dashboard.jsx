@@ -13,6 +13,7 @@ import {
   LinearScale,
 } from "chart.js";
 import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 
 ChartJS.register(
   ArcElement,
@@ -24,8 +25,7 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-
-  // fetch name from local storage
+  // fetch name from local
   const fullName = localStorage.getItem("fullName");
 
   const [summary, setSummary] = useState({
@@ -37,6 +37,8 @@ const Dashboard = () => {
   const [monthly, setMonthly] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // sidebar toggle (mobile)
+  const [openSidebar, setOpenSidebar] = useState(false);
 
   const loadDashboard = async () => {
     try {
@@ -94,23 +96,34 @@ const Dashboard = () => {
     ],
   };
 
-
-
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-100 to-gray-100">
 
-          {/* FIXED LEFT SIDEBAR  */}
-      <aside
-        className="
-          hidden md:flex flex-col
-          w-64 
-          fixed top-0 left-0 
-          h-screen
-          bg-white/40 backdrop-blur-xl 
-          shadow-xl border-r border-white/50
-          p-6 z-40
-        "
+      {/* MOBILE SIDEBAR TOGGLE BUTTON */}
+      <button
+        onClick={() => setOpenSidebar(true)}
+        className="md:hidden fixed top-4 left-4 z-50 dark:bg-indigo-600 text-white p-2 rounded-full shadow-lg"
       >
+        <Menu size={22} />
+      </button>
+
+      {/* SIDEBAR (desktop + mobile) */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full w-64 
+          dark:bg-gray-800 backdrop-blur-xl shadow-xl border-r border-white/50 
+          p-6 z-40 transition-transform duration-300
+          ${openSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+        {/* close button for mobile */}
+        <button
+          onClick={() => setOpenSidebar(false)}
+          className="md:hidden absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full"
+        >
+          <X size={22} />
+        </button>
+
         <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8">
           Finance App
         </h1>
@@ -118,36 +131,29 @@ const Dashboard = () => {
         <nav className="flex flex-col gap-4 text-gray-700 font-medium">
           <Link
             to="/dashboard"
-            className="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow"
+            className="px-4 py-2 rounded-xl bg-indigo-800 text-white shadow"
           >
             Dashboard
           </Link>
-          <Link to="/income" className="px-4 py-2 rounded-xl hover:bg-indigo-100">
+          <Link to="/income" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
             Income
           </Link>
-          <Link
-            to="/expenses"
-            className="px-4 py-2 rounded-xl hover:bg-indigo-100"
-          >
+          <Link to="/expenses" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
             Expenses
           </Link>
-          <Link
-            to="/category"
-            className="px-4 py-2 rounded-xl hover:bg-indigo-100"
-          >
+          <Link to="/category" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
             Category
           </Link>
-          <Link to="/filter" className="px-4 py-2 rounded-xl hover:bg-indigo-100">
+          <Link to="/filter" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
             Filter
           </Link>
         </nav>
       </aside>
 
-          {/* MAIN CONTENT */}
-
-      <main className="flex-1 ml-64 p-10">
+      {/* MAIN CONTENT */}
+      <main className="flex-1 md:ml-64 p-6 sm:p-8 mt-10 md:mt-0">
         <h2 className="text-3xl font-semibold text-gray-800">
-        Welcome, {fullName || "User"} 👋
+          Welcome, {fullName || "User"} 👋
         </h2>
 
         <p className="text-gray-600 mb-10">Here is your financial overview</p>

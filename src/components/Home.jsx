@@ -1,15 +1,7 @@
-// src/pages/Home.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import icon from "../assets/logo-icon.png";
-
-/**
- * Production-ready Home page
- * - Uses TailwindCSS classes with dark: variants
- * - Requires framer-motion
- * - For best dark-mode behavior ensure `darkMode: 'class'` in tailwind.config.js
- */
 
 const stagger = {
   hidden: { opacity: 0, y: 10 },

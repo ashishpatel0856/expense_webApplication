@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosConfig from "../util/axiosConfig";
 
-// Example icons (aap apne backend icons ke hisaab se replace kar sakte ho)
+//  icons 
 const ICONS = ["💰", "🛒", "🏠", "🍔", "🎁", "🚗", "💡"];
 
 export default function Category() {
@@ -15,7 +15,7 @@ export default function Category() {
     icon: ICONS[0], // default icon
   });
 
-  // -------- FETCH BASED ON FILTER --------
+  // FETCH BASED ON FILTER 
   const loadCategories = async () => {
     try {
       let res;
@@ -30,12 +30,12 @@ export default function Category() {
     }
   };
 
-  // -------- HANDLE INPUT --------
+  //  HANDLE INPUT
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // -------- SUBMIT (POST + PUT) --------
+  //  SUBMIT (POST + PUT)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -69,7 +69,7 @@ export default function Category() {
   }, [filterType]);
 
   return (
-    <div className="max-w-3xl mx-auto p-4 mt-6 space-y-6">
+    <div className="max-w-3xl mx-auto dark:bg-gray-900 p-4 mt-6 space-y-6">
 
       {/* FILTER BUTTONS */}
       <div className="flex gap-3">

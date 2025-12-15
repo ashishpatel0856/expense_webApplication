@@ -84,7 +84,7 @@ export default function Category() {
           ${openSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
-         <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8 mt-12">
+         <h1 className="text-2xl font-bold text-white tracking-wide mb-8 mt-12">
           Finance App
         </h1>
           <nav className="flex flex-col gap-4 text-gray-700 font-medium">

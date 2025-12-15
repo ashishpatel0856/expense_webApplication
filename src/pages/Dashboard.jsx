@@ -126,7 +126,7 @@ const Dashboard = () => {
           <X size={22} />
         </button>
 
-        <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8 mt-12">
+        <h1 className="text-2xl font-bold text-white tracking-wide mb-8 mt-12">
           Finance App
         </h1>
 

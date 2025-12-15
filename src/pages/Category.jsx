@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosConfig from "../util/axiosConfig";
-
+import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
 //  icons 
 const ICONS = ["💰", "🛒", "🏠", "🍔", "🎁", "🚗", "💡"];
 
@@ -8,7 +9,7 @@ export default function Category() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filterType, setFilterType] = useState("ALL");
-
+  const [openSidebar,setOpenSidebar]=useState(false)
   const [formData, setFormData] = useState({
     name: "",
     type: "EXPENSE",
@@ -69,8 +70,44 @@ export default function Category() {
   }, [filterType]);
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-4 mt-6 space-y-6">
+    <div className="max-w-3xl mx-auto bg-white p-4 mt-12 space-y-6">
 
+      <button
+        onClick={() => setOpenSidebar(true)}
+        className="md:hidden fixed top-4 left-4 z-50 dark:bg-indigo-600 text-white p-2 rounded-full shadow-lg"
+      ><Menu size={22}/></button>
+       <aside
+        className={`
+          fixed top-0 left-0 h-full w-64 
+          dark:bg-gray-800 backdrop-blur-xl shadow-xl border-r border-white/50 
+          p-6 z-40 transition-transform duration-300
+          ${openSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+         <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8 mt-12">
+          Finance App
+        </h1>
+          <nav className="flex flex-col gap-4 text-gray-700 font-medium">
+          <Link
+            to="/dashboard"
+            className="px-4 py-2 rounded-xl bg-indigo-800 text-white shadow"
+          >
+            Dashboard
+          </Link>
+          <Link to="/income" className="px-4 py-2  text-white rounded-xl hover:bg-indigo-200">
+            Income
+          </Link>
+          <Link to="/expenses" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
+            Expenses
+          </Link>
+          <Link to="/category" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
+            Category
+          </Link>
+          <Link to="/filter" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
+            Filter
+          </Link>
+        </nav>
+      </aside>
       {/* FILTER BUTTONS */}
       <div className="flex gap-3">
         {["ALL", "INCOME", "EXPENSE"].map((type) => (

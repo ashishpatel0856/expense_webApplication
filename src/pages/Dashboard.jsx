@@ -99,7 +99,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-indigo-100 to-gray-100">
+    <div className="flex min-h-screen mt-12 bg-gradient-to-br from-indigo-100 to-gray-100">
 
       {/* MOBILE SIDEBAR TOGGLE BUTTON */}
       <button
@@ -121,12 +121,12 @@ const Dashboard = () => {
         {/* close button for mobile */}
         <button
           onClick={() => setOpenSidebar(false)}
-          className="md:hidden absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full"
+          className="md:hidden absolute top-4 right-4  bg-red-500 text-white p-2 rounded-full"
         >
           <X size={22} />
         </button>
 
-        <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8">
+        <h1 className="text-2xl font-bold text-indigo-700 tracking-wide mb-8 mt-12">
           Finance App
         </h1>
 
@@ -137,7 +137,7 @@ const Dashboard = () => {
           >
             Dashboard
           </Link>
-          <Link to="/income" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
+          <Link to="/income" className="px-4 py-2  text-white rounded-xl hover:bg-indigo-200">
             Income
           </Link>
           <Link to="/expenses" className="px-4 py-2 text-white rounded-xl hover:bg-indigo-200">
@@ -151,6 +151,7 @@ const Dashboard = () => {
           </Link>
         </nav>
       </aside>
+
 
       {/* MAIN CONTENT */}
       <main className="flex-1 md:ml-64 p-6 sm:p-8 mt-10 md:mt-0">
